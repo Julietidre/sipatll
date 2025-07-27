@@ -1,0 +1,53 @@
+<script>
+// (código anterior permanece igual...)
+
+function finalizarQuiz() {
+  document.getElementById("quizBox").style.display = "none";
+  document.getElementById("fimBox").style.display = "block";
+  document.getElementById("userNome").innerText = nome;
+  document.getElementById("acertos").innerText = respostasCertas;
+
+  const mensagemFinal = document.getElementById("mensagemFinalTexto");
+  mensagemFinal.innerHTML = respostasCertas >= 6
+    ? "🎉 Parabéns! Você demonstrou ótimos conhecimentos em segurança do trabalho. Continue assim! 🦺"
+    : "⚠️ Você teve um desempenho abaixo do ideal. Que tal revisar alguns conceitos de segurança? Isso pode fazer toda a diferença! 💡";
+
+  // Envio para Google Sheets
+  const dados = {
+    nome: nome,
+    setor: setor,
+    funcao: funcao,
+    acertos: respostasCertas,
+    erros: 8 - respostasCertas
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbxlrgXJh0BZDcC3b9meg5ixw2sMlzrzeOx_TdMBw8bE9ZN-7Icuw3coyw6o_NoY1rYC/exec", {
+    method: "POST",
+    body: JSON.stringify(dados),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(response => response.text())
+    .then(res => {
+      console.log("Enviado com sucesso:", res);
+    })
+    .catch(err => {
+      console.error("Erro ao enviar:", err);
+    });
+
+  // Link do WhatsApp
+  const numeroWhatsApp = "15981214792";
+  const mensagem = `Olá! Estou confirmando minha presença na SIPAT com os seguintes dados:
+
+📛 Nome: ${nome}
+🏢 Setor: ${setor}
+👷 Função: ${funcao}
+✅ Acertos: ${respostasCertas}
+❌ Erros: ${8 - respostasCertas}`;
+
+  const linkWhats = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+  document.getElementById("btnWhats").onclick = () => {
+    window.open(linkWhats, "_blank");
+  };
+}
+</script>
